@@ -1,0 +1,35 @@
+{
+  "name": "synopsize",
+  "version": "0.0.1",
+  "description": "Print out a synopsis of values from a stream of newline-delimited JSON objects",
+  "keywords": [
+    "json",
+    "describe",
+    "summarize",
+    "synopsis"
+  ],
+  "homepage": "https://github.com/chbrown/synopsize",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chbrown/synopsize.git"
+  },
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.5.2",
+    "optimist": "^0.6.1",
+    "streaming": "1.0.3",
+    "sv": "0.4.0",
+    "tarry": "0.3.4"
+  },
+  "devDependencies": {
+    "declarations": "*",
+    "typescript": "*"
+  },
+  "bin": {
+    "synopsize": "bin/synopsize.js"
+  },
+  "scripts": {
+    "prepublish": "make"
+  }
+}
