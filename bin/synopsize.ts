@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 import * as optimist from 'optimist';
 import {range, sample} from 'tarry';
-import {Parser} from 'sv';
+import {Parser as JSONParser} from 'streaming/json';
+import {Parser as SVParser} from 'sv';
 
 import {synopsize, ColumnSynopsis} from '../index';
+
+interface Column {
+  name: string;
+  values: string[];
+}
 
 function exit(error?: Error) {
   if (error) {
@@ -66,31 +72,62 @@ function printSynopsis<T>(synopsis: ColumnSynopsis<T>, sampleLength: number) {
     // the values aren't all unique
     console.log(`  There are ${counts.size} unique ${valueRef}s, which range from ${minimum} to ${maximum}`);
     printCounts(counts, sampleLength);
-
   }
 }
 
-function synopsizeStream(inputStream: NodeJS.ReadableStream, sampleLength: number) {
-  const records: {[index: string]: string}[] = [];
-  // keep reference to parser available so that we have access to its inferences
-  const parser = inputStream.pipe(new Parser());
-  parser.on('error', error => exit(error))
-  .on('data', record => records.push(record))
-  .on('end', () => {
-    // TODO: customize sv.Parser so that we can get out string[] rows if we want
-    const columns = parser.config.columns; // Object.keys(records[0]);
-    columns.forEach((column, index) => {
-      console.log(`[${index}] "${column}"`);
-      const values = records.map(record => record[column]);
-      const synopsis = synopsize(values);
-      printSynopsis(synopsis, sampleLength);
-    });
+function consumeStream(inputStream: NodeJS.ReadableStream,
+                       callback: (error: Error, columns?: Column[]) => void) {
+  inputStream.once('readable', () => {
+    const initialBytes = inputStream.read(100);
+    inputStream.unshift(<any>initialBytes);
+    if (initialBytes.toString().match(/^\s*\{/)) {
+      // it's JSON
+      const keySet = new Set<string>();
+      const records: {[index: string]: any}[] = [];
+      const parser = inputStream.pipe(new JSONParser());
+      parser.on('error', error => callback(error))
+      .on('data', record => {
+        Object.keys(record).forEach(key => keySet.add(key));
+        records.push(record);
+      })
+      .on('end', () => {
+        const columns = [...keySet].map(name => {
+          const values = records.map(record => {
+            // use '' as the value for missing values for parity with SV
+            if (record[name] === undefined || record[name] === null) {
+              record[name] = '';
+            }
+            return String(record[name]);
+          });
+          return {name, values};
+        });
+        callback(null, columns);
+      });
+    }
+    else {
+      // it's CSV/TSV
+      const records: {[index: string]: string}[] = [];
+      // keep reference to parser available so that we have access to its inferences
+      const parser = inputStream.pipe(new SVParser());
+      parser.on('error', error => callback(error))
+      .on('data', record => records.push(record))
+      .on('end', () => {
+        // TODO: customize sv.Parser so that we can get out string[] rows if we want
+        const columns = parser.config.columns.map(name => {
+          return {name, values: records.map(record => record[name])};
+        });
+        callback(null, columns);
+      });
+    }
   });
 }
 
 function main() {
   const argvparser = optimist
-  .usage('Usage: synopsize <my_data.csv')
+  .usage([
+    'Usage: synopsize <my_data.csv',
+    '       synopsize <apiRslt.json',
+  ].join('\n'))
   .options({
     help: {
       alias: 'h',
@@ -109,6 +146,7 @@ function main() {
   });
 
   const argv = argvparser.argv;
+  const sampleLength: number = argv.sample;
 
   if (argv.help) {
     argvparser.showHelp();
@@ -120,7 +158,15 @@ function main() {
     exit(new Error('Data must be piped in on STDIN'));
   }
   else {
-    synopsizeStream(process.stdin, argv.sample);
+    consumeStream(process.stdin, (error, columns) => {
+      if (error) exit(error);
+
+      columns.forEach((column, index) => {
+        console.log(`[${index}] "${column.name}"`);
+        const synopsis = synopsize(column.values);
+        printSynopsis(synopsis, sampleLength);
+      });
+    });
   }
 }
 

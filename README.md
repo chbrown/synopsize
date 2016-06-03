@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/synopsize.svg)](https://www.npmjs.com/package/synopsize)
 
-Summarize tables of structured data, such as CSV!
+Summarize tables of structured data, such as CSV or JSON!
 
     $ npm install -g synopsize
 
@@ -47,15 +47,15 @@ Example, using [Capital Metro](https://data.texas.gov/capital-metro)'s [`fare_ru
 
 ### To-do
 
-* Support newline-delimited JSON as input
-* Infer more complex types
-  - come up with better names / descriptions
-  - custom sort (`compareFunction`) for each type
-* Draw histograms for continuous types
-* Smarter examples when showing random samples
-* Add option to sort by count instead of value
-* Width-aware padded output, especially for long values and the _value_: _count_ tables
-* Generalize for CLI / web consumption
+* [x] Support newline-delimited JSON as input
+* [ ] Infer more complex types
+  - [ ] come up with better names / descriptions
+  - [ ] custom sort (`compareFunction`) for each type
+* [ ] Draw histograms for continuous types
+* [ ] Smarter examples when showing random samples
+* [ ] Add option to sort by count instead of value
+* [ ] Width-aware padded output, especially for long values and the _value_: _count_ tables
+* [ ] Generalize for CLI / web consumption
 
 
 ## License
