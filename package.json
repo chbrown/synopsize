@@ -1,6 +1,6 @@
 {
   "name": "synopsize",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Print out a synopsis of values from a stream of newline-delimited JSON objects",
   "keywords": [
     "json",
