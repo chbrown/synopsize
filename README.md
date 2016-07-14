@@ -50,7 +50,7 @@ Example, using [Capital Metro](https://data.texas.gov/capital-metro)'s [`fare_ru
 * [x] Support newline-delimited JSON as input
 * [ ] Infer more complex types
   - [ ] come up with better names / descriptions
-  - [ ] custom sort (`compareFunction`) for each type
+  - [x] custom sort (`compareFunction`) for each type
 * [ ] Draw histograms for continuous types
 * [ ] Smarter examples when showing random samples
 * [ ] Add option to sort by count instead of value
