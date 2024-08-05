@@ -1,4 +1,2 @@
-bin/synopsize.js
-index.js
-bin/synopsize.d.ts
-index.d.ts
+*.js
+*.d.ts

@@ -9,27 +9,25 @@
     "synopsis"
   ],
   "homepage": "https://github.com/chbrown/synopsize",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/chbrown/synopsize.git"
-  },
-  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "repository": "github:chbrown/synopsize",
+  "author": "Christopher Brown <io@henrian.com>",
   "license": "MIT",
   "dependencies": {
-    "async": "^1.5.2",
     "optimist": "^0.6.1",
-    "streaming": "1.0.3",
-    "sv": "0.4.0",
-    "tarry": "0.3.4"
+    "streaming": "^1.1.1",
+    "@chbrown/sv": "^0.4.4",
+    "tarry": "^0.4.0"
   },
   "devDependencies": {
-    "declarations": "*",
-    "typescript": "*"
+    "@types/node": "^22.1.0",
+    "@types/optimist": "^0.0.33",
+    "typescript": "^5.5.4"
   },
   "bin": {
     "synopsize": "bin/synopsize.js"
   },
   "scripts": {
-    "prepublish": "make"
+    "prepare": "tsc --build && chmod +x bin/synopsize.js",
+    "clean": "tsc --build --clean"
   }
 }

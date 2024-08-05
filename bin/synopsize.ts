@@ -2,7 +2,7 @@
 import * as optimist from 'optimist';
 import {range, sample} from 'tarry';
 import {Parser as JSONParser} from 'streaming/json';
-import {Parser as SVParser} from 'sv';
+import {Parser as SVParser} from '@chbrown/sv';
 
 import {synopsize, ColumnSynopsis} from '../index';
 
